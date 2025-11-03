@@ -1,141 +1,185 @@
-/* ============================================
-   PROFESSIONAL KICK CHAT - FIXED HEIGHT VERSION
-   ============================================ */
+/* =====================================================
+   Kick Chat Overlay – Minimal Single-Message Timeline
+   -----------------------------------------------------
+   Customization variables (edit the values below):
+     --chat-font-size .......... base font size
+     --chat-visible-duration ... time message stays fully visible
+     --chat-fade-duration ...... fade-in / fade-out length
+     --chat-surface-opacity .... text & element opacity strength
+     --chat-background-alpha ... glass background transparency
+   ===================================================== */
 
-body, html {
+:root {
+    --chat-font-size: clamp(0.95rem, 1.5vw, 1.2rem);
+    --chat-visible-duration: 5s;
+    --chat-fade-duration: 0.6s;
+    --chat-surface-opacity: 0.92;
+    --chat-background-alpha: 0.42;
+    --chat-accent: #7fd6ff;
+}
+
+html,
+body {    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif !important;
+    color: rgb(232 236 255 / var(--chat-surface-opacity)) !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+
+body,
+#root,
+[class*="app"],
+[class*="chat"],
+[class*="message-list"],
+[class*="scroll"],
+[class*="content"],
+[class*="container"] {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
-    max-height: 500px !important;
-    height: 500px !important;
-    position: relative !important;
+    background: transparent !important;
 }
+/* Ensure only one message remains visible without stacking */
 
-.chat-list,
-.messages-container,
-[class*="chat"],
-[class*="message-list"] {
-    max-height: 500px !important;
-    overflow: hidden !important;
-    position: relative !important;
-    padding-bottom: 20px !important;
-    -webkit-mask-image: linear-gradient(to top, 
-        rgba(0,0,0,1) 0%, 
-        rgba(0,0,0,1) 70%, 
-        rgba(0,0,0,0.3) 90%, 
-        rgba(0,0,0,0) 100%) !important;
-    mask-image: linear-gradient(to top, 
-        rgba(0,0,0,1) 0%, 
-        rgba(0,0,0,1) 70%, 
-        rgba(0,0,0,0.3) 90%, 
-        rgba(0,0,0,0) 100%) !important;
-}
-
-body::before {
-    content: '' !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 120px !important;
-    background: linear-gradient(to bottom,
-        #000000 0%,
-        rgba(0, 0, 0, 0.95) 15%,
-        rgba(0, 0, 0, 0.7) 40%,
-        rgba(0, 0, 0, 0.3) 70%,
-        transparent 100%) !important;
-    pointer-events: none !important;
-    z-index: 999999 !important;
-}
 
 .chat-entry,
 .message-container,
 .chat-line,
-[class*="message-"] {
-    margin: 0 0 6px 0 !important;
-    padding: 8px 12px !important;
-    border-radius: 6px !important;
-    background: rgba(0, 0, 0, 0.35) !important;
-    backdrop-filter: blur(3px) !important;
-    animation: messageAppear 0.4s ease-out !important;
-    position: relative !important;
+[class*="chat-message"],
+[class*="message-row"],
+[class*="message-item"],
+[class*="message__"],
+[class*="message-"],
+li {
+    position: absolute !important;
+    inset: auto auto 0 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: auto !important;
+    max-width: min(32rem, calc(100% - 4vw)) !important;
+    z-index: 2 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    animation-name: message-in, message-out !important;
+    animation-duration: var(--chat-fade-duration), var(--chat-fade-duration) !important;
+    animation-delay: 0s, var(--chat-visible-duration) !important;
+    animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1), cubic-bezier(0.4, 0.0, 0.2, 1) !important;
+    animation-fill-mode: forwards, forwards !important;
+    transform-origin: bottom left !important;
 }
 
-@keyframes messageAppear {
-    0% {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
+
+.chat-entry > *,
+.message-container > *,
+.chat-line > *,
+[class*="chat-message"] > *,
+[class*="message-row"] > *,
+[class*="message-item"] > * {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    border-radius: 16px !important;
+    padding: 0.9rem 1.1rem !important;
+    background: rgb(18 21 29 / var(--chat-background-alpha)) !important;
+    backdrop-filter: blur(18px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(130%) !important;
+    box-shadow: 0 18px 38px -24px rgb(8 10 15 / 0.85),
+                0 6px 24px -12px rgb(0 0 0 / 0.65) !important;
+    color: rgb(240 244 255 / var(--chat-surface-opacity)) !important;
+    text-shadow: 0 0 12px rgb(0 0 0 / 0.7) !important;
+    font-size: var(--chat-font-size) !important;
+    font-weight: 500 !important;
+    line-height: 1.35 !important;
 }
 
 .username,
 .author-name,
 [class*="username"],
-[class*="author"] {
-    font-weight: 700 !important;
-    font-size: 15px !important;
-    margin-right: 8px !important;
-    letter-spacing: 0.4px !important;
-    text-shadow: 
-        0px 0px 8px rgba(0, 0, 0, 0.9),
-        1px 1px 3px rgba(0, 0, 0, 1),
-        -1px -1px 2px rgba(0, 0, 0, 0.8) !important;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)) !important;
+[class*="author"],
+[class*="user-name"],
+strong {
+    color: var(--chat-accent) !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: 0.02em !important;
+    text-shadow: 0 0 10px rgb(0 0 0 / 0.85) !important;
 }
 
 .message-text,
 .message-body,
+[class*="message-text"],
+[class*="message-body"],
+[class*="messageContent"],
 [class*="text"],
-[class*="content"],
-[class*="message-body"] {
-    font-size: 15px !important;
-    line-height: 1.5 !important;
-    letter-spacing: 0.3px !important;
-    text-shadow: 
-        0px 0px 6px rgba(0, 0, 0, 0.95),
-        1px 1px 2px rgba(0, 0, 0, 1),
-        0px 2px 6px rgba(0, 0, 0, 0.8) !important;
+span {
+    color: rgb(236 240 255 / 0.94) !important;
     font-weight: 500 !important;
+        text-shadow: 0 0 10px rgb(0 0 0 / 0.8) !important;
+
 }
 
 .badge,
 .chat-badge,
-[class*="badge"] {
-    filter: 
-        drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.9))
-        drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.7)) !important;
-    margin-right: 4px !important;
+[class*="badge"],
+[class*="icon"],
+[class*="avatar"],
+img {
+    filter: drop-shadow(0 4px 12px rgb(0 0 0 / 0.65)) !important;
 }
 
-.avatar,
-.user-avatar,
+[class*="badge"],
+[class*="icon"] {
+    flex-shrink: 0 !important;
+}
+
+
 [class*="avatar"] {
-    filter: 
-        drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.9))
-        drop-shadow(0px 0px 6px rgba(0, 0, 0, 0.6)) !important;
+    
     border-radius: 50% !important;
-    border: 2px solid rgba(0, 0, 0, 0.3) !important;
+overflow: hidden !important;
+    border: 2px solid rgb(255 255 255 / 0.08) !important;}
+
+@keyframes message-in {
+    0% {
+        opacity: 0;
+        transform: translateY(32px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-.emote,
-img[class*="emote"] {
-    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.8)) !important;
-    vertical-align: middle !important;
+@keyframes message-out {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.98);
+    }
 }
 
-* {
-    font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    -webkit-font-smoothing: antialiased !important;
-    -moz-osx-font-smoothing: grayscale !important;
-}
+/* Preserve transparency and hide any default scrollbars */
+
 
 ::-webkit-scrollbar {
-    display: none !important;
-}
+width: 0 !important;
+    height: 0 !important;}
 
 * {
     scrollbar-width: none !important;
